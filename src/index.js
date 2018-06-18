@@ -17,12 +17,12 @@ const reverseArgs = f => a => b => f(b)(a); // C (Cardinal / Cardinal)
 console.log(reverseArgs(first)(identity)(selfApplication) === selfApplication);
 
 // --- BOOLEANS
-const λTrue = a => b => a; // === first, K, Kestrel
+const λTrue = a => b => a; // is first, K, Kestrel
 λTrue.inspect = () => "it's true";
 console.log(λTrue);
 // give param A to a function, that return a function that can take any params, that return A
 // value => any => value
-const λFalse = a => b => b; // === second, KI, Kite
+const λFalse = a => b => b; // is second, KI, Kite
 λFalse.inspect = () => "it's false";
 console.log(λFalse);
 // give any param to a function, that return a function that take a B param, and that return B
@@ -30,7 +30,7 @@ console.log(λFalse);
 
 // --- BOOLEAN OPERATIONS
 // NOT
-const λNot = f => f(λFalse)(λTrue);
+const λNot = f => f(λFalse)(λTrue); // related to C (Cardinal / Cardinal)
 console.log(λNot(λTrue), λNot(λFalse));
 // decompose : λNot(λTrue)
 // give a 2 level function (x => y => x) to the following function
@@ -75,17 +75,31 @@ reverseArgs(λTrue)(λTrue)(λFalse); // is (x => y => x)(a => b => b)(c => d =>
 // AND
 const λAnd = a => b => a(b)(a);
 // so (true && true) === true
-console.log('λAnd(λTrue)(λTrue)', λAnd(λTrue)(λTrue));
+console.log('λAnd(λTrue)(λTrue):', λAnd(λTrue)(λTrue));
 // and so on
-console.log('λAnd(λTrue)(λFalse)', λAnd(λTrue)(λFalse));
-console.log('λAnd(λFalse)(λTrue)', λAnd(λFalse)(λTrue));
-console.log('λAnd(λFalse)(λFalse)', λAnd(λFalse)(λFalse));
+console.log('λAnd(λTrue)(λFalse):', λAnd(λTrue)(λFalse));
+console.log('λAnd(λFalse)(λTrue):', λAnd(λFalse)(λTrue));
+console.log('λAnd(λFalse)(λFalse):', λAnd(λFalse)(λFalse));
 // lets decompose λAnd(λTrue)(λTrue)
 const λAndDemo1 = (a => b => a(b)(a))(c => d => c)(e => f => e);
 const λAndDemo2 = (b => (c => d => c)(b)(g => h => g))(e => f => e);
 const λAndDemo3 = (c => d => c)(e => f => e)(g => h => g);
 const λAndDemo4 = (d => e => f => e)(g => h => g);
-const λAndDemo5 = e => f => e;
+const λAndDemo5 = e => f => e; // is λTrue
 
 // lets decompose λAnd(λTrue)(λFalse)
-console.log('tzeqt');
+const λAndDemo6 = (a => b => a(b)(a))(c => d => c)(e => f => f);
+const λAndDemo7 = (b => (c => d => c)(b)(g => h => g))(e => f => f);
+const λAndDemo8 = (c => d => c)(e => f => f)(g => h => g);
+const λAndDemo9 = e => f => f; // is λFalse
+
+// OR
+const λOr = a => b => a(a)(b); // is selfApplication M (Mockingbird / Rossignol)
+// so (true || true) === true
+console.log('λOr(λTrue)(λTrue):', λOr(λTrue)(λTrue));
+// and so on
+console.log('λOr(λTrue)(λFalse):', λOr(λTrue)(λFalse));
+console.log('λOr(λFalse)(λTrue):', λOr(λFalse)(λTrue));
+console.log('λOr(λFalse)(λFalse):', λOr(λFalse)(λFalse));
+
+// BOOL EQUALITY
