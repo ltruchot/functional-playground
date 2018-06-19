@@ -14,7 +14,16 @@ console.log(second('test 1')('test 2'));
 console.log(first(identity)('test 1')('test 2'));
 
 const reverseArgs = f => a => b => f(b)(a); // C (Cardinal / Cardinal)
-console.log(reverseArgs(first)(identity)(selfApplication) === selfApplication);
+console.log(
+  'reverseArgs(first)(identity)(selfApplication) === selfApplication:',
+  reverseArgs(first)(identity)(selfApplication) === selfApplication,
+);
+
+const compose = f => g => a => f(g(a)); // B (Bluebird / Merlebleu)
+console.log(
+  'compose(identity(second)(first) === first:',
+  compose(identity)(second)(first) === second,
+);
 
 // --- BOOLEANS
 const λTrue = a => b => a; // is first, K, Kestrel
@@ -128,4 +137,31 @@ const λBoolEqualityDemo3 = (h => i => i)(j => k => k)(
 );
 const λBoolEqualityDemo4 = (j => k => k)(d => e => e)(f => g => f);
 const λBoolEqualityDemo5 = (k => k)(f => g => f);
-const λBoolEqualityDemo5 = f => g => f; // is λTrue
+const λBoolEqualityDemo6 = f => g => f; // is λTrue
+
+// NUMBERS
+const λZero = a => b => b; // is KI (false),  apply func one time to val
+console.log(λZero(λNot)(λTrue)); // 0*not(true) is true
+const λOnce = a => b => a(b); // is I (identity),  apply func one time to val
+console.log(λOnce(λNot)(λTrue)); // 1*not(true) is false
+const λTwice = a => b => a(a(b)); // apply func 2 times to val
+console.log(λTwice(λNot)(λTrue)); // 2*not(true) is true
+const λThrice = a => b => a(a(a(b))); // apply func 3 times to val
+console.log(λThrice(λNot)(λTrue)); // 3*not(true) is false
+// and so on
+const λFourFold = a => b => a(a(a(a(b)))); // apply func 4 times to val
+const λFiveFold = a => b => a(a(a(a(a(b))))); // apply func 5 times to val
+// and finally
+const λSuccessor = n => f => a => f(n(f)(a));
+console.log(λSuccessor(λZero)(λNot)(λTrue)); // is false
+
+// for debug purpose
+const jsnum = n => n(x => x + 1)(0);
+console.log(jsnum(λSuccessor(λSuccessor(λSuccessor(λTwice))))); // 3th successor of 2 is 5
+
+// COMPOSE
+const λCompose = f => g => a => f(g(a)); // B (Bluebird / Merlebleu)
+console.log(
+  'λCompose(λNot)(λNot)(λTrue) === λTrue:',
+  λCompose(λNot)(λNot)(λTrue) === λTrue,
+);
