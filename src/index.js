@@ -29,6 +29,7 @@ console.log(λFalse);
 // any => value => value
 
 // --- BOOLEAN OPERATIONS
+
 // NOT
 const λNot = f => f(λFalse)(λTrue); // related to C (Cardinal / Cardinal)
 console.log(λNot(λTrue), λNot(λFalse));
@@ -102,4 +103,29 @@ console.log('λOr(λTrue)(λFalse):', λOr(λTrue)(λFalse));
 console.log('λOr(λFalse)(λTrue):', λOr(λFalse)(λTrue));
 console.log('λOr(λFalse)(λFalse):', λOr(λFalse)(λFalse));
 
+// lets decompose decompose λOr(λTrue)(λFalse)
+const λOrDemo1 = (a => b => a(a)(b))(c => d => c)(e => f => f);
+const λOrDemo2 = (b => (c => d => c)(g => h => g)(b))(e => f => f);
+const λOrDemo3 = (c => d => c)(g => h => g)(e => f => f);
+const λOrDemo4 = g => h => g; // is λTrue
+
 // BOOL EQUALITY
+const λBoolEquality = a => b => a(b)(λNot(b));
+// so true === true
+console.log('λBoolEquality(λTrue)(λTrue):', λBoolEquality(λTrue)(λTrue));
+// and so on
+console.log('λBoolEquality(λTrue)(λFalse):', λBoolEquality(λTrue)(λFalse));
+console.log('λBoolEquality(λFalse)(λFalse):', λBoolEquality(λFalse)(λFalse));
+console.log('λBoolEquality(λTrue)(λFalse):', λBoolEquality(λFalse)(λTrue));
+
+// lets decompose decompose λBoolEquality(λFalse)(λFalse)
+const λBoolEqualityDemo1 = (a => b =>
+  a(b)((c => c(d => e => e)(f => g => f))(b)))(h => i => i)(j => k => k);
+const λBoolEqualityDemo2 = (b =>
+  (h => i => i)(b)((c => c(d => e => e)(f => g => f))(b)))(j => k => k);
+const λBoolEqualityDemo3 = (h => i => i)(j => k => k)(
+  (c => c(d => e => e)(f => g => f))(j => k => k),
+);
+const λBoolEqualityDemo4 = (j => k => k)(d => e => e)(f => g => f);
+const λBoolEqualityDemo5 = (k => k)(f => g => f);
+const λBoolEqualityDemo5 = f => g => f; // is λTrue
