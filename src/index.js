@@ -2,7 +2,7 @@
 const identity = a => a; // I (Idiot / Cacatoès)
 console.log(identity(42));
 
-const selfApplication = f => f(f); // M (Mockingbird / Rossignol)
+const selfApplication = f => f(f); // M (Mockingbird / Moqueur)
 console.log(selfApplication(identity) === identity);
 
 const first = a => b => a; // K (Kestrel / Crécerelle), is a kind of "constant"
@@ -24,7 +24,13 @@ console.log(
   'compose(identity(second)(first) === first:',
   compose(identity)(second)(first) === second,
 );
-
+const hold = n => k => k(n); // Th (Thrush / Turdidae)
+console.log('hold(first)(identity)', hold(first)(identity));
+// and Th is CI
+let holdDemo = (f => a => b => f(b)(a))(e => e);
+holdDemo = a => b => (e => e)(b)(a);
+holdDemo = a => b => b(a);
+console.log('holdDemo(first)(identity)', holdDemo(first)(identity));
 // --- BOOLEANS
 const λTrue = a => b => a; // is first, K, Kestrel
 λTrue.inspect = () => "it's true";
@@ -44,29 +50,29 @@ const λNot = f => f(λFalse)(λTrue); // related to C (Cardinal / Cardinal)
 console.log(λNot(λTrue), λNot(λFalse));
 // decompose : λNot(λTrue)
 // give a 2 level function (x => y => x) to the following function
-const λNotDemo0 = f => f(a => b => b)(c => d => c);
+let λNotDemo = f => f(a => b => b)(c => d => c);
 // that will execute this function, with (a => b => b) as param
-const λNotDemo1 = (x => y => x)(a => b => b);
+λNotDemo = (x => y => x)(a => b => b);
 // so we get
-const λNotDemo2 = y => a => b => b;
+λNotDemo = y => a => b => b;
 // that will execute this function wirth (c => d => c) as param
-const λNotDemo2bis = (y => a => b => b)(c => d => c);
+λNotDemo = (y => a => b => b)(c => d => c);
 // and that will get the (c => d => c) param
-const λNotDemo3 = a => b => b;
+λNotDemo = a => b => b;
 // no concern (c => d => c)
 console.log((f => f(a => b => b)(c => d => c))(x => y => x).toString());
 
 // decompose : λNot(λFalse)
 // give a 2 level function (x => y => y) to the following function
-const λNotDemo4 = f => f(a => b => b)(c => d => c);
+λNotDemo = f => f(a => b => b)(c => d => c);
 // that will execute this function, with (a => b => b) as param
-const λNotDemo5 = x => y => y;
+λNotDemo = x => y => y;
 // so we get
-const λNotDemo6 = y => y;
+λNotDemo = y => y;
 // that will execute this function wirth (c => d => c) as param
-const λNotDemo6bis = (y => y)(c => d => c);
+λNotDemo = (y => y)(c => d => c);
 // and that will get the (c => d => c) param
-const λNotDemo7 = c => d => c;
+λNotDemo = c => d => c;
 // no concern for (a => b => b)
 console.log((f => f(a => b => b)(c => d => c))(x => y => y).toString());
 
@@ -91,17 +97,17 @@ console.log('λAnd(λTrue)(λFalse):', λAnd(λTrue)(λFalse));
 console.log('λAnd(λFalse)(λTrue):', λAnd(λFalse)(λTrue));
 console.log('λAnd(λFalse)(λFalse):', λAnd(λFalse)(λFalse));
 // lets decompose λAnd(λTrue)(λTrue)
-const λAndDemo1 = (a => b => a(b)(a))(c => d => c)(e => f => e);
-const λAndDemo2 = (b => (c => d => c)(b)(g => h => g))(e => f => e);
-const λAndDemo3 = (c => d => c)(e => f => e)(g => h => g);
-const λAndDemo4 = (d => e => f => e)(g => h => g);
-const λAndDemo5 = e => f => e; // is λTrue
+let λAndDemo = (a => b => a(b)(a))(c => d => c)(e => f => e);
+λAndDemo = (b => (c => d => c)(b)(g => h => g))(e => f => e);
+λAndDemo = (c => d => c)(e => f => e)(g => h => g);
+λAndDemo = (d => e => f => e)(g => h => g);
+λAndDemo = e => f => e; // is λTrue
 
 // lets decompose λAnd(λTrue)(λFalse)
-const λAndDemo6 = (a => b => a(b)(a))(c => d => c)(e => f => f);
-const λAndDemo7 = (b => (c => d => c)(b)(g => h => g))(e => f => f);
-const λAndDemo8 = (c => d => c)(e => f => f)(g => h => g);
-const λAndDemo9 = e => f => f; // is λFalse
+λAndDemo = (a => b => a(b)(a))(c => d => c)(e => f => f);
+λAndDemo = (b => (c => d => c)(b)(g => h => g))(e => f => f);
+λAndDemo = (c => d => c)(e => f => f)(g => h => g);
+λAndDemo = e => f => f; // is λFalse
 
 // OR
 const λOr = a => b => a(a)(b); // is selfApplication M (Mockingbird / Rossignol)
@@ -113,10 +119,10 @@ console.log('λOr(λFalse)(λTrue):', λOr(λFalse)(λTrue));
 console.log('λOr(λFalse)(λFalse):', λOr(λFalse)(λFalse));
 
 // lets decompose decompose λOr(λTrue)(λFalse)
-const λOrDemo1 = (a => b => a(a)(b))(c => d => c)(e => f => f);
-const λOrDemo2 = (b => (c => d => c)(g => h => g)(b))(e => f => f);
-const λOrDemo3 = (c => d => c)(g => h => g)(e => f => f);
-const λOrDemo4 = g => h => g; // is λTrue
+let λOrDemo = (a => b => a(a)(b))(c => d => c)(e => f => f);
+λOrDemo = (b => (c => d => c)(g => h => g)(b))(e => f => f);
+λOrDemo = (c => d => c)(g => h => g)(e => f => f);
+λOrDemo = g => h => g; // is λTrue
 
 // BOOL EQUALITY
 const λBoolEquality = a => b => a(b)(λNot(b));
@@ -128,16 +134,17 @@ console.log('λBoolEquality(λFalse)(λFalse):', λBoolEquality(λFalse)(λFalse
 console.log('λBoolEquality(λTrue)(λFalse):', λBoolEquality(λFalse)(λTrue));
 
 // lets decompose decompose λBoolEquality(λFalse)(λFalse)
-const λBoolEqualityDemo1 = (a => b =>
-  a(b)((c => c(d => e => e)(f => g => f))(b)))(h => i => i)(j => k => k);
-const λBoolEqualityDemo2 = (b =>
+let λBoolEqualityDemo = (a => b => a(b)((c => c(d => e => e)(f => g => f))(b)))(
+  h => i => i,
+)(j => k => k);
+λBoolEqualityDemo = (b =>
   (h => i => i)(b)((c => c(d => e => e)(f => g => f))(b)))(j => k => k);
-const λBoolEqualityDemo3 = (h => i => i)(j => k => k)(
+λBoolEqualityDemo = (h => i => i)(j => k => k)(
   (c => c(d => e => e)(f => g => f))(j => k => k),
 );
-const λBoolEqualityDemo4 = (j => k => k)(d => e => e)(f => g => f);
-const λBoolEqualityDemo5 = (k => k)(f => g => f);
-const λBoolEqualityDemo6 = f => g => f; // is λTrue
+λBoolEqualityDemo = (j => k => k)(d => e => e)(f => g => f);
+λBoolEqualityDemo = (k => k)(f => g => f);
+λBoolEqualityDemo = f => g => f; // is λTrue
 
 // NUMBERS
 const λZero = a => b => b; // is KI (false),  apply func one time to val
@@ -152,12 +159,24 @@ console.log(λThrice(λNot)(λTrue)); // 3*not(true) is false
 const λFourFold = a => b => a(a(a(a(b)))); // apply func 4 times to val
 const λFiveFold = a => b => a(a(a(a(a(b))))); // apply func 5 times to val
 // and finally
-const λSuccessor = n => f => a => f(n(f)(a));
+let λSuccessor = n => f => a => f(n(f)(a));
 console.log(λSuccessor(λZero)(λNot)(λTrue)); // is false
 
 // for debug purpose
 const jsnum = n => n(x => x + 1)(0);
 console.log(jsnum(λSuccessor(λSuccessor(λSuccessor(λTwice))))); // 3th successor of 2 is 5
+
+// decompose successor of 1
+let λSuccessorDemo = (a => b => c => b(a(b)(c)))(d => e => d(e));
+λSuccessorDemo = b => c => b(b(c));
+λSuccessorDemo = jsnum(b => c => b(b(c)));
+console.log('λSuccessorDemo', λSuccessorDemo); // is 2
+// or more explicitely
+λSuccessorDemo = (n => n(x => x + 1)(0))(b => c => b(b(c)));
+λSuccessorDemo = (x => x + 1)((x => x + 1)(0));
+λSuccessorDemo = (x => x + 1)(0) + 1;
+λSuccessorDemo = 0 + 1 + 1;
+console.log('λSuccessorDemo', λSuccessorDemo); // is 2
 
 // COMPOSE
 const λCompose = f => g => a => f(g(a)); // B (Bluebird / Merlebleu)
@@ -165,3 +184,59 @@ console.log(
   'λCompose(λNot)(λNot)(λTrue) === λTrue:',
   λCompose(λNot)(λNot)(λTrue) === λTrue,
 );
+
+// decompose λCompose(λNot)(λNot)(λTrue)
+let λComposeDemo = (a => b => c => a(b(c)))(d => d(e => f => f)(g => h => g))(
+  i => i(j => k => k)(l => m => l),
+)(n => o => n);
+λComposeDemo = (b => c => (d => d(e => f => f)(g => h => g))(b(c)))(i =>
+  i(j => k => k)(l => m => l),
+)(n => o => n);
+λComposeDemo = (c =>
+  (d => d(e => f => f)(g => h => g))((i => i(j => k => k)(l => m => l))(c)))(
+  n => o => n,
+);
+λComposeDemo = (d => d(e => f => f)(g => h => g))(
+  (i => i(j => k => k)(l => m => l))(n => o => n),
+);
+λComposeDemo = (i => i(j => k => k)(l => m => l))(n => o => n)(e => f => f)(
+  g => h => g,
+);
+λComposeDemo = (n => o => n)(j => k => k)(l => m => l)(e => f => f)(g => h =>
+  g,
+);
+λComposeDemo = g => h => g; // is true (K)
+
+// so let's compose something usefull
+console.log(
+  'λCompose(jsnum)(λSuccessor)(λFiveFold)',
+  λCompose(jsnum)(λSuccessor)(λFiveFold),
+); // log 6 !
+
+// a better version of λSuccessor is now available
+// remember n => f => a => f(n(f)(a)) ?
+λSuccessor = n => f => λCompose(f)(n(f));
+
+// ADD
+// so 2 + 2 is twice successor of 2
+const λAdd = n => k => n(λSuccessor)(k);
+console.log(jsnum(λAdd(λFiveFold)(λTwice)));
+
+// MULTIPLY
+// so 2 * 3 is twice the thrice of 1
+let λMultiply = n => k => f => n(k(f));
+// sa basically
+λMultiply = λCompose; // alpha equivalent
+console.log(
+  'jsnum(λMultiply(λTwice)(λThrice))',
+  jsnum(λMultiply(λTwice)(λThrice)),
+);
+
+// EXPONENTIATION
+// so 2pow3 = 8, is 2 x 2 x 2, only a composition of twices one by one
+const λPow = n => k => k(n); // is a simple Th (Thrush) that hold and arg
+console.log('jsnum(λPow(λThrice)(λTwice))', jsnum(λPow(λThrice)(λTwice)));
+// and Th is CI (hold is reverseArgs of identity) !
+
+// IS ZERO
+const λIsZero = '';
