@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { HotModuleReplacementPlugin } = require('webpack');
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/lambda_problem.js',
   output: {
     filename: 'app.js',
   },

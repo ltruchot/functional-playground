@@ -31,13 +31,27 @@ let holdDemo = (f => a => b => f(b)(a))(e => e);
 holdDemo = a => b => (e => e)(b)(a);
 holdDemo = a => b => b(a);
 console.log('holdDemo(first)(identity)', holdDemo(first)(identity));
+
+const holdPair = a => b => f => f(a)(b); // (Vireo / Vireo), using closure as datastructure
+// for example this pair, ready to give back those 2 args to any function
+const pair = holdPair(identity)(selfApplication);
+// now get "identity"
+console.log('pair(first)', pair(first));
+// now get "selfApplication"
+console.log('pair(second)', pair(second));
+
+// EMPTY
+const λEmpty = a => a;
+
 // --- BOOLEANS
 const λTrue = a => b => a; // is first, K, Kestrel
+const λFirst = λTrue;
 λTrue.inspect = () => "it's true";
 console.log(λTrue);
 // give param A to a function, that return a function that can take any params, that return A
 // value => any => value
 const λFalse = a => b => b; // is second, KI, Kite
+const λSecond = λFalse;
 λFalse.inspect = () => "it's false";
 console.log(λFalse);
 // give any param to a function, that return a function that take a B param, and that return B
@@ -146,7 +160,7 @@ let λBoolEqualityDemo = (a => b => a(b)((c => c(d => e => e)(f => g => f))(b)))
 λBoolEqualityDemo = (k => k)(f => g => f);
 λBoolEqualityDemo = f => g => f; // is λTrue
 
-// NUMBERS
+// NUMBERS (chuch numerals)
 const λZero = a => b => b; // is KI (false),  apply func one time to val
 console.log(λZero(λNot)(λTrue)); // 0*not(true) is true
 const λOnce = a => b => a(b); // is I (identity),  apply func one time to val
@@ -233,10 +247,112 @@ console.log(
 );
 
 // EXPONENTIATION
-// so 2pow3 = 8, is 2 x 2 x 2, only a composition of twices one by one
+// so 2^3 = 8, is 2 x 2 x 2, only a composition of twices one by one
 const λPow = n => k => k(n); // is a simple Th (Thrush) that hold and arg
 console.log('jsnum(λPow(λThrice)(λTwice))', jsnum(λPow(λThrice)(λTwice)));
 // and Th is CI (hold is reverseArgs of identity) !
 
 // IS ZERO
-const λIsZero = '';
+// λTrue(λFalse)) returns always λFalse,
+// if n(λTrue(λFalse)) don't do nothing (0 case), we want λTrue
+const λIsZero = n => n(λTrue(λFalse))(λTrue);
+console.log('λIsZero(λZero)', λIsZero(λZero));
+console.log('λIsZero(λTwice)', λIsZero(λTwice));
+console.log('λIsZero(λFourFold)', λIsZero(λFourFold));
+
+// PAIRS
+const λPair = a => b => f => f(a)(b);
+
+// The problem:
+// 	define functions range, map, reverse and foreach, obeying the restrictions below,
+// such that the following program works properly. It prints the squares of numbers from 1 to 10, in reverse order.
+
+// Restrictions:
+// 	- You must not use arrays. The square bracket characters, [ and ], are forbidden, as well as new Array.
+// 	- You must not use objects. The curly braces, { and }, and the dot character (.) are forbidden.
+//      You may use curly braces for code blocks, but not for creating JavaScript objects.
+// 	- Should go without saying, these functions must be generic and do what their name implies.
+//      They must not be hard-coded for the particular 1..10 example.
+
+const successor = a => a + 1;
+//let list = λPair(0)(λPair(1)(λPair(2)(3)));
+// console.log('list', list(λSecond)(λSecond)(λFirst));
+const range = (a, b, list) => {
+  const next = successor(a);
+  // head
+  if (!list) {
+    return range(next, b, λPair(a));
+  }
+  // body
+  if (a < b - 1) {
+    return range(next, b, λCompose(list)(λPair(a)));
+  }
+  // tail
+  return list(λPair(a)(next));
+};
+
+const map = (list, f, newList) => {
+  // head
+  if (!newList) {
+    return map(list(λSecond), f, λPair(f(list(λFirst))));
+  }
+  // tail
+  if (typeof list === 'number') {
+    return newList(f(list));
+  }
+  // body
+  return map(list(λSecond), f, λCompose(newList)(λPair(f(list(λFirst)))));
+};
+
+const tail = list => {
+  return typeof list === 'function' ? tail(list(λSecond)) : list;
+};
+const pop = (list, next, newList) => {
+  if (!next) {
+    return pop(list(λSecond), list(λFirst));
+  } else {
+    if (typeof list === 'function') {
+      newList = newList ? λCompose(newList)(λPair(next)) : λPair(next);
+      return pop(list(λSecond), list(λFirst), newList);
+    }
+    return newList ? newList(next) : next;
+  }
+};
+
+const reverse = (list, newList) => {
+  if (typeof list === 'function') {
+    if (!newList) {
+      newList = λPair(tail(list));
+    } else {
+      newList = λCompose(newList)(λPair(tail(list)));
+    }
+    return reverse(pop(list), newList);
+  }
+  return λCompose(newList)(λPair(tail(list)));
+};
+
+const foreach = (list, f) => {
+  if (typeof list(λSecond)(λFirst) === 'number') {
+    f(list(λSecond)(λFirst));
+    if (typeof list(λSecond) === 'function') {
+      return foreach(list(λSecond), f);
+    }
+  }
+};
+
+var numbers = range(1, 10);
+numbers = map(numbers, n => n * n);
+numbers = reverse(numbers);
+foreach(numbers, console.log);
+
+// output:
+// 100
+// 81
+// 64
+// 49
+// 36
+// 25
+// 16
+// 9
+// 4
+// 1
