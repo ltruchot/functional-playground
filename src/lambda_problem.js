@@ -137,7 +137,43 @@ const toJsArray = (list, arr = []) => {
 };
 console.log('toJsArray', toJsArray(numbers));
 
-// KIET METHODS
-// const toJsArray2 = list =>
-//   list((head, tail) => [head].concat(toJsArray(tail)), _ => []);
-// console.log('toJsArray2', toJsArray2(numbers));
+function kiet() {
+  // "KIET LE" SOLUTION (So much cleaner !)
+  const List = (value, next) => f => f(value, next);
+  const Nil = (_, f) => f();
+  const Append = (newValue, list) =>
+    list(
+      (value, next) => List(value, Append(newValue, next)),
+      _ => List(newValue, Nil),
+    );
+
+  const range = (start, end) =>
+    List(start, start < end ? range(start + 1, end) : Nil);
+  const map = (list, f) =>
+    list((value, next) => List(f(value), map(next, f)), _ => Nil);
+  const reverse = list =>
+    list((value, next) => Append(value, reverse(next)), _ => Nil);
+  const foreach = (list, f) =>
+    list((value, next) => {
+      f(value);
+      return foreach(next, f);
+    }, _ => Nil);
+
+  const toJsArray = list =>
+    list((head, tail) => [head].concat(toJsArray(tail)), _ => []);
+
+  // The problem:
+  // 	define functions range, map, reverse and foreach, obeying the restrictions below, such that the following program works properly. It prints the squares of numbers from 1 to 10, in reverse order.
+
+  // Restrictions:
+  // 	- You must not use arrays. The square bracket characters, [ and ], are forbidden, as well as new Array.
+  // 	- You must not use objects. The curly braces, { and }, and the dot character (.) are forbidden. You may use curly braces for code blocks, but not for creating JavaScript objects.
+  // 	- Should go without saying, these functions must be generic and do what their name implies. They must not be hard-coded for the particular 1..10 example.
+
+  var numbers = range(1, 10);
+  numbers = map(numbers, n => n * n);
+  numbers = reverse(numbers);
+  foreach(numbers, console.log);
+  console.log('toJsArray', toJsArray(numbers));
+}
+kiet();
